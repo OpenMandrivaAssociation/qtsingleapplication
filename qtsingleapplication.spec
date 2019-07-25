@@ -30,6 +30,7 @@ Patch1:     qtsingleapplication-remove-included-qtlockedfile.patch
 Patch2:     qtsingleapplication-qupzilla.patch
 
 BuildRequires: qt5-qtbase-devel
+BuildRequires: qtlockedfile-qt5-devel
 
 %description
 For some applications it is useful or even critical that they are started
