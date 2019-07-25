@@ -1,40 +1,35 @@
-%define debug_package %nil
-# Upstream uses weird versioning convention
-%define upstreamver 2.6_1
-%define version %(echo %upstreamver | sed 's!_!.!' )
+%global commit0 ad9bc4600ce769a8b3ad10910803cd555811b70c
+%global _qt5_headerdir %{_includedir}/qt5
+%global _qt5_archdatadir %{_libdir}/qt5
 
-%define major 1
-%define libname %mklibname %{name} 2.6
-%define libcore %mklibname qtsinglecoreapplication 2.6
-%define devname %mklibname %{name} -d
-%define devcore %mklibname qtsinglecoreapplication -d
+Summary:    Qt library to start applications only once per user
+Name:       qtsingleapplication
+Version:    2.6.1
+Release:    35
 
-Summary:	Qt library to start applications only once per user
-Name:		qtsingleapplication
-Version:	%{version}
-Release:	14
-Group:		Development/KDE and Qt
-License:	GPLv3 or LGPLv2 with exceptions
-Url:		http://qt.nokia.com/products/appdev/add-on-products/catalog/4/Utilities/qtsingleapplication
-Source0:	http://get.qt.nokia.com/qt/solutions/lgpl/qtsingleapplication-%{upstreamver}-opensource.tar.gz
-# The following source and 2 patches are sent upstream:
-# http://bugreports.qt.nokia.com/browse/QTSOLBUG-119
-# To add qmake support for convenience for packages using this library:
-Source1:	qtsingleapplication.prf
-Source2:	qtsinglecoreapplication.prf
+License:    GPLv3 or LGPLv2 with exceptions
+URL:        http://doc.qt.digia.com/solutions/4/qtsingleapplication/qtsingleapplication.html
+Source0:    https://github.com/qtproject/qt-solutions/archive/%{commit0}.tar.gz#/%{name}-%{commit0}.tar.gz
+# Proposed upstream in https://codereview.qt-project.org/#/c/92417/
+Source1:    qtsingleapplication.prf
+# Proposed upstream in https://codereview.qt-project.org/#/c/92416/
+Source2:    qtsinglecoreapplication.prf
+# Proposed upstream in https://codereview.qt-project.org/#/c/92411/
+Source3:    LICENSE.GPL3
+# Proposed upstream in https://codereview.qt-project.org/#/c/92411/
+Source4:    LICENSE.LGPL
+# Proposed upstream in https://codereview.qt-project.org/#/c/92411/
+Source5:    LGPL_EXCEPTION
 
-# Don't build examples, Include qtsinglecoreapplication library in the build:
-Patch0:		qtsingleapplication-build.diff
-# The library includes a duplicate of qtlockedfile. We link to it dynamically instead:
-Patch1:		qtsingleapplication-dont-bundle-external-libs.patch
-# Additional API for building clementine
-# http://bugreports.qt.nokia.com/browse/QTSOLBUG-133
-Patch2:		qtsingleapplication-add-api.patch
-# gcc-4.7 compilation fix
-Patch3:		qtsingleapplication-gcc47.patch
+# Proposed upstream in https://codereview.qt-project.org/#/c/92416/
+Patch0:     qtsingleapplication-build-qtsinglecoreapplication.patch
+# Proposed upstream in https://codereview.qt-project.org/#/c/92415/
+Patch1:     qtsingleapplication-remove-included-qtlockedfile.patch
 
-BuildRequires:	qt4-devel
-BuildRequires:	qtlockedfile-devel
+# Features for unbundling in Qupzilla, https://github.com/QupZilla/qupzilla/issues/1503
+Patch2:     qtsingleapplication-qupzilla.patch
+
+BuildRequires: qt5-qtbase-devel
 
 %description
 For some applications it is useful or even critical that they are started
@@ -45,54 +40,30 @@ actions, e.g. loading a file, in that instance.
 The QtSingleApplication class provides an interface to detect a running
 instance, and to send command strings to that instance.
 
-#--------------------------------------------------------------------
+%package qt5
+Summary:    Qt5 library to start applications only once per user
 
-%package	-n %{libname}
-Summary:	Qt library to start applications only once per user
-Group:		Development/KDE and Qt
-
-%description	-n %{libname}
+%description qt5
 For some applications it is useful or even critical that they are started
 only once by any user. Future attempts to start the application should
 activate any already running instance, and possibly perform requested
 actions, e.g. loading a file, in that instance.
 
-The QtSingleApplication class provides an interface to detect a running
-instance, and to send command strings to that instance.
+This is a special build against Qt5.
 
-This is the library package for QtSingleApplication.
+%package qt5-devel
+Summary:    Development files for %{name}-qt5
+Requires:   %{name}-qt5 = %{version}-%{release}
+Requires:   qt5-qtbase-devel
 
-%files -n %{libname}
-%{_qt_libdir}/lib*SingleApplication*.so.%{major}*
-
-#--------------------------------------------------------------------
-
-%package	-n %{devname}
-Summary:	Development files for %{name}
-Group:		Development/KDE and Qt
-Requires:	%{libname} = %{version}-%{release}
-Provides:	qtsingleapplication-devel = %{version}-%{release}
-
-%description	-n %{devname}
+%description qt5-devel
 This package contains libraries and header files for developing applications
-that use QtSingleApplication.
+that use QtSingleApplication with Qt5.
 
-%files -n %{devname}
-%doc LGPL_EXCEPTION.txt LICENSE.* README.TXT
-%doc doc examples
-%{_qt_libdir}/lib*SingleApplication*.so
-%dir %{_qt_includedir}/QtSolutions/
-%{_qt_includedir}/QtSolutions/QtSingleApplication
-%{_qt_includedir}/QtSolutions/%{name}.h
-%{_qt_datadir}/mkspecs/features/%{name}.prf
+%package -n qtsinglecoreapplication-qt5
+Summary:    Qt library to start applications only once per user (Qt5)
 
-#--------------------------------------------------------------------
-
-%package	-n %{libcore}
-Summary:	Qt library to start applications only once per user
-Group:		Development/KDE and Qt
-
-%description	-n %{libcore}
+%description -n qtsinglecoreapplication-qt5
 For some applications it is useful or even critical that they are started
 only once by any user. Future attempts to start the application should
 activate any already running instance, and possibly perform requested
@@ -101,64 +72,97 @@ actions, e.g. loading a file, in that instance.
 For console (non-GUI) applications, the QtSingleCoreApplication variant
 is provided, which avoids dependency on QtGui.
 
-This is the library package for QtSingleCoreApplication.
+This is a special build against Qt5.
 
-%files -n %{libcore}
-%{_qt_libdir}/lib*SingleCoreApplication*.so.%{major}*
+%package -n qtsinglecoreapplication-qt5-devel
+Summary:    Development files for qtsinglecoreapplication-qt5
+Requires:   qtsinglecoreapplication-qt5 = %{version}-%{release}
+Requires:   qt5-qtbase-devel
 
-#--------------------------------------------------------------------
-
-%package	-n %{devcore}
-Summary:	Development files for qtsinglecoreapplication
-Group:		Development/KDE and Qt
-Requires:	%{libcore} = %{version}-%{release}
-Provides:	qtsinglecoreapplication-devel = %{version}-%{release}
-
-%description -n %{devcore}
+%description -n qtsinglecoreapplication-qt5-devel
 This package contains libraries and header files for developing applications
 that use QtSingleCoreApplication.
 
-%files -n %{devcore}
-%doc LGPL_EXCEPTION.txt LICENSE.*
-%{_qt_libdir}/lib*SingleCoreApplication*.so
-%dir %{_qt_includedir}/QtSolutions/
-%{_qt_includedir}/QtSolutions/QtSingleCoreApplication
-%{_qt_includedir}/QtSolutions/qtsinglecoreapplication.h
-%{_qt_datadir}/mkspecs/features/qtsinglecoreapplication.prf
-
-#--------------------------------------------------------------------
 
 %prep
-%setup -qn %{name}-%{upstreamver}-opensource
-%apply_patches
+%setup -qnqt-solutions-%{commit0}/%{name}
+%patch0 -p0
+%patch1 -p0
+%patch2 -p1
+# use versioned soname
+sed -i "s,head,%(echo '%{version}' |sed -r 's,(.*)\..*,\1,'),g" common.pri
 
-# (Fedora) We already disabled bundling this extrenal library.
+mkdir licenses
+cp -p %{SOURCE3} %{SOURCE4} %{SOURCE5} licenses
+
+# We already disabled bundling this external library.
 # But just to make sure:
+rm -rf ../qtlockedfile/
+sed -i 's,qtlockedfile\.h,QtSolutions/\0,' src/qtlocalpeer.h
 rm src/{QtLocked,qtlocked}*
+
+mkdir qt5
+cp -p %{SOURCE1} %{SOURCE2} qt5
+sed -i -r 's,-lQt,\05,' qt5/qtsingleapplication.prf
+sed -i -r 's,-lQt,\05,' qt5/qtsinglecoreapplication.prf
+
+# additional header needed for Qt5.5
+sed -i -r 's,.include,\0 <QtCore/QDataStream>\n\0,' src/qtlocalpeer.h
 
 
 %build
-touch .licenseAccepted
 # Does not use GNU configure
 ./configure -library
-%qmake_qt4
-%make
+%{qmake_qt5}
+%make_build
+
 
 %install
 # libraries
-mkdir -p %{buildroot}%{_qt_libdir}
-cp -a lib/* %{buildroot}%{_qt_libdir}
-chmod 755 %{buildroot}%{_qt_libdir}/*.so.*.*.*
+mkdir -p %{buildroot}%{_libdir}
+cp -a lib/* %{buildroot}%{_libdir}
+chmod 755 %{buildroot}%{_libdir}/*.so*
 
 # headers
-mkdir -p %{buildroot}%{_qt_includedir}/QtSolutions
-cp -a \
+mkdir -p %{buildroot}%{_qt5_headerdir}/QtSolutions
+cp -ap \
     src/qtsingleapplication.h \
     src/QtSingleApplication \
     src/qtsinglecoreapplication.h \
     src/QtSingleCoreApplication \
-    %{buildroot}%{_qt_includedir}/QtSolutions
+    %{buildroot}%{_qt5_headerdir}/QtSolutions
+mkdir -p %{buildroot}%{_qt5_headerdir}
 
-mkdir -p %{buildroot}%{_qt_datadir}/mkspecs/features
-cp -a %{SOURCE1} %{SOURCE2} %{buildroot}%{_qt_datadir}/mkspecs/features/
+mkdir -p %{buildroot}%{_qt5_archdatadir}/mkspecs/features
+install -p -m644 qt5/*.prf %{buildroot}%{_qt5_archdatadir}/mkspecs/features
 
+
+%files
+%license licenses/*
+%doc README.TXT
+
+%files qt5
+%license licenses/*
+%doc README.TXT
+# Caution! Unversioned .so file goes into -devel
+%{_qt5_libdir}/libQt5*SingleApplication*.so.*
+
+%files qt5-devel
+%doc doc/html/ examples/
+%{_qt5_libdir}/libQt5*SingleApplication*.so
+%dir %{_qt5_headerdir}/QtSolutions/
+%{_qt5_headerdir}/QtSolutions/QtSingleApplication
+%{_qt5_headerdir}/QtSolutions/%{name}.h
+%{_qt5_archdatadir}/mkspecs/features/qtsingleapplication.prf
+
+%files -n qtsinglecoreapplication-qt5
+%license licenses/*
+# Caution! Unversioned .so file goes into -devel
+%{_qt5_libdir}/libQt5*SingleCoreApplication*.so.*
+
+%files -n qtsinglecoreapplication-qt5-devel
+%{_qt5_libdir}/libQt5*SingleCoreApplication*.so
+%dir %{_qt5_headerdir}/QtSolutions/
+%{_qt5_headerdir}/QtSolutions/QtSingleCoreApplication
+%{_qt5_headerdir}/QtSolutions/qtsinglecoreapplication.h
+%{_qt5_archdatadir}/mkspecs/features/qtsinglecoreapplication.prf
