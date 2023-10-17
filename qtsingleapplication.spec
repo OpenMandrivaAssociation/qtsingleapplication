@@ -9,7 +9,7 @@ Release:    35
 
 License:    GPLv3 or LGPLv2 with exceptions
 URL:        http://doc.qt.digia.com/solutions/4/qtsingleapplication/qtsingleapplication.html
-Source0:    https://github.com/qtproject/qt-solutions/archive/%{commit0}.tar.gz#/%{name}-%{commit0}.tar.gz
+Source0:    https://github.com/qtproject/qt-solutions/archive/%{commit0}.tar.gz#/qt-solutions-%{commit0}.tar.gz
 # Proposed upstream in https://codereview.qt-project.org/#/c/92417/
 Source1:    qtsingleapplication.prf
 # Proposed upstream in https://codereview.qt-project.org/#/c/92416/
