@@ -22,12 +22,12 @@ Source4:    LICENSE.LGPL
 Source5:    LGPL_EXCEPTION
 
 # Proposed upstream in https://codereview.qt-project.org/#/c/92416/
-Patch0:     qtsingleapplication-build-qtsinglecoreapplication.patch
+#Patch0:     qtsingleapplication-build-qtsinglecoreapplication.patch
 # Proposed upstream in https://codereview.qt-project.org/#/c/92415/
-Patch1:     qtsingleapplication-remove-included-qtlockedfile.patch
+#Patch1:     qtsingleapplication-remove-included-qtlockedfile.patch
 
 # Features for unbundling in Qupzilla, https://github.com/QupZilla/qupzilla/issues/1503
-Patch2:     qtsingleapplication-qupzilla.patch
+#Patch2:     qtsingleapplication-qupzilla.patch
 
 BuildRequires: qt5-qtbase-devel
 BuildRequires: qtlockedfile-qt5-devel
