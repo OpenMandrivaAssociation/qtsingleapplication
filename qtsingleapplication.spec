@@ -87,9 +87,9 @@ that use QtSingleCoreApplication.
 
 %prep
 %setup -qn qt-solutions-%{commit0}
-%patch0 -p0
-%patch1 -p0
-%patch2 -p1
+#patch0 -p0
+#patch1 -p0
+#patch2 -p1
 # use versioned soname
 sed -i "s,head,%(echo '%{version}' |sed -r 's,(.*)\..*,\1,'),g" common.pri
 
