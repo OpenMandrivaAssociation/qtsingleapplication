@@ -1,4 +1,4 @@
-%global commit0 ad9bc4600ce769a8b3ad10910803cd555811b70c
+%global commit0 777e95ba69952f11eaec0adfb0cb987fabcdecb3
 %global _qt5_headerdir %{_includedir}/qt5
 %global _qt5_archdatadir %{_libdir}/qt5
 
@@ -86,7 +86,7 @@ that use QtSingleCoreApplication.
 
 
 %prep
-%setup -qnqt-solutions-%{commit0}/%{name}
+%setup -qn qt-solutions-%{commit0}
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
