@@ -91,7 +91,7 @@ that use QtSingleCoreApplication.
 #patch1 -p0
 #patch2 -p1
 # use versioned soname
-sed -i "s,head,%(echo '%{version}' |sed -r 's,(.*)\..*,\1,'),g" common.pri
+#sed -i "s,head,%(echo '%{version}' |sed -r 's,(.*)\..*,\1,'),g" common.pri
 
 mkdir licenses
 cp -p %{SOURCE3} %{SOURCE4} %{SOURCE5} licenses
